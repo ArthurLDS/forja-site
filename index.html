@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forja: Plano de Vida</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Plano de vida, Santo Terço guiado, leituras da Missa e a Bíblia inteira num app só. Funciona offline, sem conta e sem anúncios. Para iPhone e Android.">
+<meta property="og:title" content="Forja: Plano de Vida">
+<meta property="og:description" content="Sua vida de oração, inteira, no bolso. Normas, terço guiado, liturgia do dia e a Escritura. Offline, sem conta, sem anúncios.">
+<meta property="og:image" content="https://arthurlds.github.io/forja-site/img/icon-play-512.png">
+<meta property="og:url" content="https://arthurlds.github.io/forja-site/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#F6F2EB">
+<link rel="icon" href="img/icon-play-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: a book's rhythm. Garamond chapters, a calm cream page, the app's own screens
+   rebuilt in HTML as the illustrations. One bold moment: the donkey, huge, in the hero. */
+:root{
+  --bg:#F6F2EB;          /* Papel: the app's cream */
+  --surface:#FFFFFF;     /* the card */
+  --ink:#0E2238;         /* the donkey's navy */
+  --ink-2:#57524A;       /* warm secondary ink */
+  --ink-3:#8C8478;
+  --accent:#1E4C80;      /* the app's accent */
+  --accent-soft:#E6EDF6;
+  --rule:#E7E0D4;
+  --rubric:#A3262A;      /* the missal red */
+  --gold:#B08D4A;
+  --band:#0E2238;        /* the dark band: same in both themes */
+  --band-ink:#F3EDE2;
+  --band-ink-2:#A9B6C6;
+  --shadow:0 1px 2px rgba(14,34,56,.06),0 8px 28px -10px rgba(14,34,56,.18);
+  --phone-shadow:0 2px 6px rgba(14,34,56,.08),0 40px 80px -30px rgba(14,34,56,.45);
+  --serif:"EB Garamond",Garamond,"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --sans:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --max:1160px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12181F;--surface:#1E252D;--ink:#E9EBED;--ink-2:#B3BBC5;--ink-3:#7F8995;
+  --accent:#86ABD7;--accent-soft:#1D2D41;--rule:#2A323C;--rubric:#E07A70;--gold:#C9A866;
+  --band:#0A1928;--band-ink:#EDE6DA;--band-ink-2:#93A3B6;
+  --shadow:0 0 0 1px #2A323C,0 12px 30px -12px rgba(0,0,0,.6);
+  --phone-shadow:0 0 0 1px #2A323C,0 40px 80px -30px rgba(0,0,0,.8);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12181F;--surface:#1E252D;--ink:#E9EBED;--ink-2:#B3BBC5;--ink-3:#7F8995;
+  --accent:#86ABD7;--accent-soft:#1D2D41;--rule:#2A323C;--rubric:#E07A70;--gold:#C9A866;
+  --band:#0A1928;--band-ink:#EDE6DA;--band-ink-2:#93A3B6;
+  --shadow:0 0 0 1px #2A323C,0 12px 30px -12px rgba(0,0,0,.6);
+  --phone-shadow:0 0 0 1px #2A323C,0 40px 80px -30px rgba(0,0,0,.8);
+  color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font:600 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:-.01em;text-wrap:balance;margin:0}
+p{margin:0}
+.lede{font-size:clamp(17px,1.6vw,19px);color:var(--ink-2);max-width:56ch}
+
+/* ---------- header ---------- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid transparent;transition:border-color .2s}
+.top.scrolled{border-bottom-color:var(--rule)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:600 22px/1 var(--serif);letter-spacing:.01em}
+.donkey{background:var(--ink);-webkit-mask:url(img/burro.png) center/contain no-repeat;mask:url(img/burro.png) center/contain no-repeat}
+.brand .donkey{width:18px;height:27px}
+.nav{display:flex;gap:26px;margin-left:auto}
+.nav a{text-decoration:none;font-size:14px;color:var(--ink-2);font-weight:500}
+.nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font:600 14px/1 var(--sans);padding:11px 18px;border-radius:999px;background:var(--ink);color:var(--bg);transition:transform .15s,opacity .15s}
+.btn:hover{transform:translateY(-1px)}
+@media (max-width:820px){.nav{display:none}.top .btn{margin-left:auto}}
+
+/* ---------- store badges ---------- */
+.stores{display:flex;flex-wrap:wrap;gap:12px}
+.store{display:inline-flex;align-items:center;gap:12px;min-width:186px;padding:10px 20px 10px 16px;border-radius:14px;background:#0B0B0C;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.14);transition:transform .15s,box-shadow .15s}
+.store:hover{transform:translateY(-2px);box-shadow:0 12px 24px -12px rgba(0,0,0,.5)}
+.store svg{flex:none}
+.store small{display:block;font:500 11px/1.1 var(--sans);opacity:.85;letter-spacing:.01em}
+.store b{display:block;font:600 19px/1.15 var(--sans);letter-spacing:-.01em}
+.trust{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font-size:14px;color:var(--ink-2)}
+.trust span{display:inline-flex;align-items:center;gap:7px}
+.trust svg{color:var(--accent)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding-block:56px 40px;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.08fr .92fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(46px,6.6vw,88px);line-height:.98;letter-spacing:-.025em;margin:18px 0 22px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero .lede{margin-bottom:32px}
+.hero-art{position:relative;display:flex;justify-content:center;min-height:620px}
+.hero-donkey{position:absolute;width:min(520px,95%);aspect-ratio:531/801;right:-6%;top:-4%;opacity:.07}
+.hero-art .phone{position:relative;z-index:2;width:320px;transform:rotate(-2deg);animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+.float{position:absolute;z-index:3;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;display:flex;align-items:center;gap:12px;font-size:13px;animation:rise 1s cubic-bezier(.2,.7,.2,1) both}
+.float b{display:block;font-weight:600;font-size:13px}
+.float span{color:var(--ink-3);font-size:12px}
+.float .tile{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);flex:none}
+.f1{left:-2%;top:22%;animation-delay:.25s}
+.f2{right:-4%;bottom:16%;animation-delay:.4s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1}}
+@media (max-width:960px){
+  .hero .wrap{grid-template-columns:1fr}
+  .hero-art{min-height:0;padding-top:20px}
+  .f1{left:0}.f2{right:0}
+}
+@media (max-width:520px){.float{display:none}.store{min-width:0;flex:1 1 160px}}
+
+/* ---------- phone frame around real screenshots ---------- */
+.phone{width:300px;max-width:100%;aspect-ratio:393/852;border-radius:48px;padding:9px;background:#0C0F13;box-shadow:var(--phone-shadow);flex:none}
+.screen{position:relative;height:100%;border-radius:40px;overflow:hidden;background:#F6F2EB;color:#0E2238}
+.screen.dark{background:#161D26;color:#E9EBED}
+.screen img{width:100%;height:100%;object-fit:cover;display:block}
+.island{position:absolute;top:2.1%;left:50%;transform:translateX(-50%);width:32%;height:3.6%;border-radius:20px;background:#000}
+.sbar{position:absolute;inset:0 0 auto;height:6.2%;display:flex;align-items:center;justify-content:space-between;padding:0 9% 0 12%;font:600 12.5px/1 var(--sans);letter-spacing:-.01em}
+.sicons{display:block;width:64px;height:auto}
+.art.pair{min-height:640px;align-items:center}
+.art.pair .phone.back{position:absolute;transform:translate(-34%,-4%) rotate(-5deg) scale(.88);opacity:.96}
+.art.pair .phone.front{transform:translate(18%,4%) rotate(2deg)}
+.chapter .art:has(.painting)::before{display:none}
+.painting{margin:0;position:relative;z-index:1;max-width:460px;width:100%}
+.painting img{width:100%;height:auto;aspect-ratio:1100/880;object-fit:cover;border-radius:18px;box-shadow:var(--phone-shadow)}
+.painting figcaption{margin-top:16px;font-size:14px;color:var(--ink-3)}
+.painting figcaption span{display:block;font:500 22px/1.2 var(--serif);color:var(--ink);margin-bottom:2px}
+@media (max-width:900px){.art.pair{min-height:600px}.art.pair .phone.back{transform:translate(-26%,-3%) rotate(-5deg) scale(.82)}.art.pair .phone.front{transform:translate(14%,4%) rotate(2deg)}}
+@media (max-width:460px){.phone{width:260px}.art.pair{min-height:540px}.art.pair .phone.back{display:none}.art.pair .phone.front{transform:none}}
+
+/* ---------- numbers ---------- */
+.numbers{padding-block:28px 64px}
+.numbers .wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-block:1px solid var(--rule)}
+.num{padding:26px 18px;text-align:left;border-left:1px solid var(--rule)}
+.num:first-child{border-left:0;padding-left:0}
+.num b{display:block;font:500 clamp(36px,4vw,52px)/1 var(--serif);letter-spacing:-.02em;font-variant-numeric:lining-nums tabular-nums}
+.num span{display:block;margin-top:8px;font-size:14px;color:var(--ink-2);line-height:1.35}
+@media (max-width:860px){.numbers .wrap{grid-template-columns:repeat(2,1fr)}.num{border-left:0;border-top:1px solid var(--rule);padding-left:0}.num:nth-child(-n+2){border-top:0}.num:last-child{grid-column:1/-1}}
+
+/* ---------- story ---------- */
+.story{padding-block:40px 96px}
+.story .wrap{display:grid;grid-template-columns:200px 1fr;gap:56px;align-items:center}
+.story .donkey{width:150px;aspect-ratio:531/801;justify-self:center}
+.story blockquote{margin:0;font:400 clamp(26px,3.2vw,40px)/1.22 var(--serif);letter-spacing:-.01em;text-wrap:pretty}
+.story blockquote em{color:var(--accent)}
+.story p{margin-top:20px;color:var(--ink-2);max-width:62ch}
+@media (max-width:760px){.story .wrap{grid-template-columns:1fr;gap:28px}.story .donkey{width:96px;justify-self:start}}
+
+/* ---------- chapters ---------- */
+.chapter{padding-block:88px;border-top:1px solid var(--rule)}
+.chapter .wrap{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.chapter.flip .copy{order:2}
+.chapter .copy{min-width:0}
+.chapter h2{font-size:clamp(36px,4.4vw,56px);line-height:1.02;margin:16px 0 20px}
+.chapter .art{display:flex;justify-content:center;position:relative}
+.chapter .art::before{content:"";position:absolute;inset:8% 6%;border-radius:40px;background:var(--accent-soft);z-index:0}
+.chapter .art .phone{position:relative;z-index:1}
+.points{list-style:none;padding:0;margin:30px 0 0;display:grid;gap:18px}
+.points li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
+.points svg{color:var(--accent);margin-top:2px}
+.points b{display:block;font-weight:600;margin-bottom:2px}
+.points span{color:var(--ink-2);font-size:15px}
+@media (max-width:900px){.chapter{padding-block:64px}.chapter .wrap{grid-template-columns:1fr;gap:44px}.chapter.flip .copy{order:0}}
+
+/* ---------- bento ---------- */
+.more{padding-block:96px;border-top:1px solid var(--rule)}
+.more-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+.more-head h2{font-size:clamp(34px,4vw,52px);line-height:1.04;max-width:16ch;margin-top:14px}
+.more-head .lede{max-width:42ch}
+.bento{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cell{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;gap:10px;min-width:0;overflow:hidden;position:relative}
+.cell h3{font-size:24px;line-height:1.1}
+.cell p{color:var(--ink-2);font-size:15px}
+.cell .ic{width:42px;height:42px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;margin-bottom:6px}
+.span2{grid-column:span 2}
+.cell.via{flex-direction:row;gap:22px;align-items:center}
+.cell.via img{width:132px;aspect-ratio:4/5;object-fit:cover;border-radius:12px;flex:none}
+.cell.via .credit{font-size:12px;color:var(--ink-3)}
+.di{margin-top:auto;align-self:flex-start;display:flex;align-items:center;gap:10px;background:#000;color:#fff;border-radius:999px;padding:8px 16px 8px 10px;font:600 14px/1 var(--sans);font-variant-numeric:tabular-nums}
+.di i{width:22px;height:22px;border-radius:50%;background:#F5A623;display:grid;place-items:center}
+.di small{opacity:.6;font-weight:500}
+.langs{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.langs span{font:600 12px/1 var(--sans);padding:7px 10px;border-radius:999px;border:1px solid var(--rule);color:var(--ink-2)}
+@media (max-width:980px){.bento{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.bento{grid-template-columns:1fr}.span2{grid-column:auto}.cell.via{flex-direction:column;align-items:flex-start}.cell.via img{width:100%;max-width:220px}}
+
+/* ---------- privacy band ---------- */
+.band{background:var(--band);color:var(--band-ink);padding-block:96px;position:relative;overflow:hidden}
+.band .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:center}
+.band .eyebrow{color:var(--gold)}
+.band h2{font-size:clamp(36px,4.6vw,60px);line-height:1.02;margin:16px 0 20px}
+.band .lede{color:var(--band-ink-2)}
+.locks{display:grid;gap:14px}
+.lock{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;padding:18px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.lock .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(201,168,102,.14);color:var(--gold)}
+.lock b{display:block;font-weight:600}
+.lock span{color:var(--band-ink-2);font-size:15px}
+.band .donkey{position:absolute;right:-60px;bottom:-80px;width:360px;aspect-ratio:531/801;background:var(--band-ink);opacity:.04}
+@media (max-width:900px){.band .wrap{grid-template-columns:1fr;gap:40px}}
+
+/* ---------- faq ---------- */
+.faq{padding-block:96px}
+.faq .wrap{display:grid;grid-template-columns:.8fr 1.2fr;gap:64px}
+.faq h2{font-size:clamp(34px,4vw,52px);line-height:1.04;margin-top:14px}
+.faq details{border-bottom:1px solid var(--rule)}
+.faq details:first-child{border-top:1px solid var(--rule)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:22px 0;font:500 21px/1.3 var(--serif)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:300 26px/1 var(--sans);color:var(--accent);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{padding:0 0 22px;color:var(--ink-2);max-width:62ch}
+@media (max-width:900px){.faq .wrap{grid-template-columns:1fr;gap:28px}}
+
+/* ---------- final cta ---------- */
+.cta{padding-block:40px 110px}
+.cta-card{border-radius:36px;background:var(--surface);box-shadow:var(--shadow);padding:clamp(36px,6vw,72px);display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:center}
+.cta-card img{width:132px;border-radius:30px;box-shadow:0 18px 40px -16px rgba(14,34,56,.45)}
+.cta-card h2{font-size:clamp(34px,4.4vw,58px);line-height:1.02;margin-bottom:14px}
+.cta-card .lede{margin-bottom:28px}
+@media (max-width:760px){.cta-card{grid-template-columns:1fr;gap:28px}.cta-card img{width:96px;border-radius:22px}}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--rule);padding-block:40px 56px;font-size:14px;color:var(--ink-3)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px}
+footer .brand{color:var(--ink);font-size:19px}
+footer p{max-width:64ch;margin-top:12px;line-height:1.55}
+footer nav{display:flex;gap:20px;align-items:flex-start}
+footer nav a{text-decoration:none;color:var(--ink-2)}
+footer nav a:hover{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="apple" viewBox="0 0 24 24"><path fill="currentColor" d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76-1.47.02-2.83.86-3.59 2.18-1.53 2.66-.39 6.6 1.1 8.76.73 1.06 1.6 2.24 2.73 2.2 1.1-.04 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.41 1.2-2.47-.03-.01-2.3-.88-2.33-3.5zM14.2 6.13c.6-.74 1.01-1.75.9-2.77-.87.04-1.93.58-2.55 1.31-.56.65-1.05 1.69-.92 2.68.97.08 1.96-.49 2.57-1.22z"/></symbol>
+  <symbol id="play" viewBox="0 0 24 24"><path fill="#00D7FE" d="M3.6 2.3c-.2.2-.3.6-.3 1v17.4c0 .4.1.8.3 1l.1.1 9.7-9.7v-.2L3.7 2.2l-.1.1z"/><path fill="#FFCE00" d="M16.6 15.3l-3.2-3.2v-.2l3.2-3.2.1.1 3.8 2.2c1.1.6 1.1 1.6 0 2.2l-3.8 2.2-.1-.1z"/><path fill="#FF3A44" d="M16.7 15.2l-3.3-3.3-9.8 9.8c.4.4 1 .4 1.6.1l11.5-6.6"/><path fill="#00F076" d="M16.7 8.8L5.2 2.2c-.7-.4-1.3-.3-1.6.1l9.8 9.7 3.3-3.2z"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M8 12.3l2.7 2.7L16 9.7"/></symbol>
+</svg>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Forja, início"><span class="donkey" aria-hidden="true"></span>Forja</a>
+    <nav class="nav" aria-label="Seções">
+      <a href="#plano">Plano de vida</a>
+      <a href="#terco">Santo Terço</a>
+      <a href="#liturgia">Liturgia</a>
+      <a href="#missas">Missas</a>
+      <a href="#leituras">Leituras</a>
+      <a href="#oracoes">Orações</a>
+      <a href="#perguntas">Perguntas</a>
+    </nav>
+    <a class="btn" href="#baixar">Baixar grátis</a>
+  </div>
+</header>
+
+<main id="inicio">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Plano de vida · Orações · Escritura</p>
+      <h1>Sua vida de oração, <em>inteira</em>, no bolso.</h1>
+      <p class="lede">As normas do dia com lembretes, o Santo Terço rezado com você, as leituras da Missa e a Bíblia completa. Um app só, desenhado para o silêncio. Funciona até no modo avião.</p>
+      <div class="stores" id="baixar-hero">
+        <a class="store" href="https://apps.apple.com/app/id6836571411" target="_blank" rel="noopener" aria-label="Baixar na App Store">
+          <svg width="28" height="28"><use href="#apple"/></svg>
+          <span><small>Baixar na</small><b>App Store</b></span>
+        </a>
+        <a class="store" href="https://play.google.com/store/apps/details?id=com.arthurangeli.forja" target="_blank" rel="noopener" aria-label="Disponível no Google Play">
+          <svg width="26" height="26"><use href="#play"/></svg>
+          <span><small>Disponível no</small><b>Google Play</b></span>
+        </a>
+      </div>
+      <div class="trust">
+        <span><svg width="16" height="16"><use href="#check"/></svg>Sem conta</span>
+        <span><svg width="16" height="16"><use href="#check"/></svg>Sem anúncios</span>
+        <span><svg width="16" height="16"><use href="#check"/></svg>Funciona offline</span>
+        <span><svg width="16" height="16"><use href="#check"/></svg>5 idiomas</span>
+      </div>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="hero-donkey donkey"></div>
+      <div class="float f1"><span class="tile"><svg width="20" height="20"><use href="#dot"/></svg></span><div><b>Oração da manhã</b><span>Feito às 6:42</span></div></div>
+      <div class="phone">
+        <div class="screen">
+          <img src="img/screens/today-light.webp" alt="Tela Hoje do Forja: 4 de 11 normas feitas, com Oferecimento de obras, Oração da manhã, Santa Missa e Leitura do Evangelho marcadas" width="393" height="852" fetchpriority="high">
+          <div class="sbar" aria-hidden="true"><span>9:41</span><svg class="sicons" width="66" height="12" viewBox="0 0 66 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><path d="M29 3.2a9 9 0 0 1 12 0l-1.3 1.4a7 7 0 0 0-9.4 0zM31.3 5.7a5.6 5.6 0 0 1 7.4 0L37.4 7a3.7 3.7 0 0 0-4.8 0zM35 11l-1.8-2a2.6 2.6 0 0 1 3.6 0z"/><rect x="45.5" y="1" width="18" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="47.3" y="2.8" width="12" height="6.4" rx="1.6"/><rect x="64.4" y="4" width="1.4" height="4" rx=".7" opacity=".45"/></g></svg></div>
+          <div class="island" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="float f2"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6zM10 19a2 2 0 0 0 4 0"/></svg></span><div><b>Angelus</b><span>Lembrete às 12:00</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers" aria-label="O Forja em números">
+  <div class="wrap">
+    <div class="num"><b>23</b><span>normas do plano de vida, com lembrete</span></div>
+    <div class="num"><b>114</b><span>orações do devocionário, em até 5 idiomas</span></div>
+    <div class="num"><b>4</b><span>Bíblias completas traduzidas da Vulgata</span></div>
+    <div class="num"><b>80</b><span>obras de arte sacra nos mistérios do Rosário</span></div>
+    <div class="num"><b>0</b><span>contas, anúncios ou dados enviados</span></div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story" aria-label="Por que um burrinho">
+  <div class="wrap">
+    <span class="donkey" aria-hidden="true"></span>
+    <div>
+      <blockquote>São Josemaría gostava do <em>burrinho de nora</em>: dá voltas, todos os dias, sempre no mesmo caminho. É assim que a água chega à horta.</blockquote>
+      <p>Forja nasceu dessa imagem. Não promete transformar a sua vida em uma semana. Ajuda você a dar a volta de hoje, e a de amanhã, com tudo o que precisa num lugar só, sem distração e sem pressa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 1: PLANO -->
+<section class="chapter" id="plano">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow">Plano de vida</p>
+      <h2>As normas do dia, na ordem em que você as vive.</h2>
+      <p class="lede">Escolha as suas normas, diárias, semanais e mensais, e o Forja organiza o dia por momentos: manhã, meio-dia, tarde e noite. Marcar é um toque.</p>
+      <ul class="points">
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Lembretes que respeitam você</b><span>Escolha a hora e os dias de cada norma. Nada toca sem você pedir.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Passou da meia-noite?</b><span>Marque o que ficou de ontem num toque. O plano entende quem reza tarde.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Cada norma explicada</b><span>O que é, quanto dura e uma dica para começar, com as leituras certas a um toque.</span></div></li>
+      </ul>
+    </div>
+    <div class="art">
+      <div class="phone">
+        <div class="screen">
+          <img src="img/screens/practice-light.webp" alt="Tela de uma norma no Forja: Oração da manhã, com duração, dica para começar e leituras sugeridas" width="393" height="852" loading="lazy">
+          <div class="sbar" aria-hidden="true"><span>9:41</span><svg class="sicons" width="66" height="12" viewBox="0 0 66 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><path d="M29 3.2a9 9 0 0 1 12 0l-1.3 1.4a7 7 0 0 0-9.4 0zM31.3 5.7a5.6 5.6 0 0 1 7.4 0L37.4 7a3.7 3.7 0 0 0-4.8 0zM35 11l-1.8-2a2.6 2.6 0 0 1 3.6 0z"/><rect x="45.5" y="1" width="18" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="47.3" y="2.8" width="12" height="6.4" rx="1.6"/><rect x="64.4" y="4" width="1.4" height="4" rx=".7" opacity=".45"/></g></svg></div>
+          <div class="island" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 2: TERÇO -->
+<section class="chapter flip" id="terco">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow">Santo Terço guiado</p>
+      <h2>A voz conduz a oração. A tela mostra o mistério.</h2>
+      <p class="lede">O guia reza a primeira metade e faz silêncio para você responder. Enquanto isso, a tela mostra a cena que se contempla e o Evangelho dela, versículo a versículo, conforme as contas avançam.</p>
+      <ul class="points">
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Cinco vozes, o seu ritmo</b><span>Escolha quem conduz, a velocidade e o tamanho das pausas.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>As contas mostram onde você está</b><span>Um olhar responde "que mistério, que Ave-Maria?". Pule por oração ou por etapa.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Continua no bolso</b><span>Tela apagada, telefone guardado: a oração segue, com controles na tela de bloqueio.</span></div></li>
+      </ul>
+    </div>
+    <div class="art">
+      <figure class="painting">
+        <img src="img/anunciacao.webp" alt="A Anunciação, de Fra Angelico" loading="lazy" width="1100" height="880">
+        <figcaption><span>A Anunciação</span>Fra Angelico, c. 1426 · uma das 80 obras do Rosário no app</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 3: LITURGIA -->
+<section class="chapter" id="liturgia">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow">Liturgia do dia</p>
+      <h2>As leituras da Missa de hoje, como num missal.</h2>
+      <p class="lede">Primeira leitura, salmo e Evangelho, direto da conferência episcopal do seu idioma. A cor litúrgica do dia, os versículos em vermelho de rubrica e a resposta do salmo sempre à vista.</p>
+      <ul class="points">
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Qualquer dia do calendário</b><span>Prepare a Missa de domingo ou releia a de ontem.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>A resposta do salmo à vista</b><span>Enquanto você lê as estrofes, o refrão fica fixo no alto da tela.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Grife o que tocar você</b><span>Selecione uma frase e guarde-a para a oração da tarde.</span></div></li>
+      </ul>
+    </div>
+    <div class="art">
+      <div class="phone">
+        <div class="screen">
+          <img src="img/screens/liturgy-light.webp" alt="Leituras da Missa no Forja, com a cor litúrgica do dia e os versículos numerados em vermelho" width="393" height="852" loading="lazy">
+          <div class="sbar" aria-hidden="true"><span>9:41</span><svg class="sicons" width="66" height="12" viewBox="0 0 66 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><path d="M29 3.2a9 9 0 0 1 12 0l-1.3 1.4a7 7 0 0 0-9.4 0zM31.3 5.7a5.6 5.6 0 0 1 7.4 0L37.4 7a3.7 3.7 0 0 0-4.8 0zM35 11l-1.8-2a2.6 2.6 0 0 1 3.6 0z"/><rect x="45.5" y="1" width="18" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="47.3" y="2.8" width="12" height="6.4" rx="1.6"/><rect x="64.4" y="4" width="1.4" height="4" rx=".7" opacity=".45"/></g></svg></div>
+          <div class="island" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER: MISSAS -->
+<section class="chapter flip" id="missas">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow">Missas por perto</p>
+      <h2>A próxima Missa, a dois passos de você.</h2>
+      <p class="lede">Viajando, numa cidade nova ou com a agenda apertada: o Forja mostra as igrejas mais próximas, a hora da próxima Missa em cada uma e como chegar.</p>
+      <ul class="points">
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Missa, Confissão e Adoração</b><span>Os horários da semana inteira de cada igreja, com o dia de hoje destacado.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>No mapa e na lista</b><span>Arraste o mapa para outra região, escolha o raio e procure uma igreja pelo nome.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Como chegar num toque</b><span>Abra a rota no Waze, no Google Maps ou no Mapas da Apple, e guarde as suas igrejas favoritas.</span></div></li>
+      </ul>
+    </div>
+    <div class="art pair">
+      <div class="phone back">
+        <div class="screen">
+          <img src="img/screens/church-light.webp" alt="Página da Catedral da Sé no Forja: próxima Missa hoje às 12:00, botão Como chegar e horários da semana" width="393" height="852" loading="lazy">
+          <div class="sbar" aria-hidden="true"><span>9:41</span><svg class="sicons" width="66" height="12" viewBox="0 0 66 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><path d="M29 3.2a9 9 0 0 1 12 0l-1.3 1.4a7 7 0 0 0-9.4 0zM31.3 5.7a5.6 5.6 0 0 1 7.4 0L37.4 7a3.7 3.7 0 0 0-4.8 0zM35 11l-1.8-2a2.6 2.6 0 0 1 3.6 0z"/><rect x="45.5" y="1" width="18" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="47.3" y="2.8" width="12" height="6.4" rx="1.6"/><rect x="64.4" y="4" width="1.4" height="4" rx=".7" opacity=".45"/></g></svg></div>
+          <div class="island" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="phone front">
+        <div class="screen">
+          <img src="img/screens/masstimes-light.webp" alt="Missas por perto: três igrejas no mapa e na lista, com a hora da próxima Missa de cada uma" width="393" height="852" loading="lazy">
+          <div class="sbar" aria-hidden="true"><span>9:41</span><svg class="sicons" width="66" height="12" viewBox="0 0 66 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><path d="M29 3.2a9 9 0 0 1 12 0l-1.3 1.4a7 7 0 0 0-9.4 0zM31.3 5.7a5.6 5.6 0 0 1 7.4 0L37.4 7a3.7 3.7 0 0 0-4.8 0zM35 11l-1.8-2a2.6 2.6 0 0 1 3.6 0z"/><rect x="45.5" y="1" width="18" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="47.3" y="2.8" width="12" height="6.4" rx="1.6"/><rect x="64.4" y="4" width="1.4" height="4" rx=".7" opacity=".45"/></g></svg></div>
+          <div class="island" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 4: LEITURAS -->
+<section class="chapter" id="leituras">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow">Leituras</p>
+      <h2>Tudo o que você lê na oração, numa estante só.</h2>
+      <p class="lede">A aba Leituras reúne o que alimenta a oração mental: duas meditações novas a cada dia, a Sagrada Escritura e as obras de São Josemaría, cada uma com a sua capa. Abra, leia, e o livro guarda o lugar.</p>
+      <ul class="points">
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Duas meditações por dia</b><span>Falar com Deus e a meditação do site do Opus Dei, prontas pela manhã.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>A Bíblia inteira, sem internet</b><span>Matos Soares, Douay-Rheims, Martini e a Vulgata Clementina, com busca e "Jo 3,16".</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Caminho, Sulco, Forja e mais</b><span>Oito obras de São Josemaría. Vá ao ponto pelo número ou peça um ao acaso.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Textos e áudios</b><span>Troque para Áudios e ouça meditações pregadas por sacerdotes.</span></div></li>
+      </ul>
+    </div>
+    <div class="art pair">
+      <div class="phone back">
+        <div class="screen">
+          <img src="img/screens/bible-light.webp" alt="O Evangelho de São João, capítulo 1, no leitor da Bíblia do Forja" width="393" height="852" loading="lazy">
+          <div class="sbar" aria-hidden="true"><span>9:41</span><svg class="sicons" width="66" height="12" viewBox="0 0 66 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><path d="M29 3.2a9 9 0 0 1 12 0l-1.3 1.4a7 7 0 0 0-9.4 0zM31.3 5.7a5.6 5.6 0 0 1 7.4 0L37.4 7a3.7 3.7 0 0 0-4.8 0zM35 11l-1.8-2a2.6 2.6 0 0 1 3.6 0z"/><rect x="45.5" y="1" width="18" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="47.3" y="2.8" width="12" height="6.4" rx="1.6"/><rect x="64.4" y="4" width="1.4" height="4" rx=".7" opacity=".45"/></g></svg></div>
+          <div class="island" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="phone front">
+        <div class="screen">
+          <img src="img/screens/readings-light.webp" alt="Aba Leituras do Forja: meditações do dia, Sagrada Escritura e as obras de São Josemaría em capas coloridas" width="393" height="852" loading="lazy">
+          <div class="sbar" aria-hidden="true"><span>9:41</span><svg class="sicons" width="66" height="12" viewBox="0 0 66 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><path d="M29 3.2a9 9 0 0 1 12 0l-1.3 1.4a7 7 0 0 0-9.4 0zM31.3 5.7a5.6 5.6 0 0 1 7.4 0L37.4 7a3.7 3.7 0 0 0-4.8 0zM35 11l-1.8-2a2.6 2.6 0 0 1 3.6 0z"/><rect x="45.5" y="1" width="18" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="47.3" y="2.8" width="12" height="6.4" rx="1.6"/><rect x="64.4" y="4" width="1.4" height="4" rx=".7" opacity=".45"/></g></svg></div>
+          <div class="island" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 5: ORAÇÕES -->
+<section class="chapter flip" id="oracoes">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow">Devocionário</p>
+      <h2>114 orações, na sua língua e na da Igreja.</h2>
+      <p class="lede">Das orações de todo dia aos hinos e às preces pelos falecidos, organizadas em doze categorias. Leia uma língua só ou duas lado a lado, com o latim ao alcance de um toque.</p>
+      <ul class="points">
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Lado a lado</b><span>Português e latim, ou qualquer par entre cinco idiomas, linha por linha.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>O ℣ e o ℟ no lugar certo</b><span>As orações dialogadas como num breviário, prontas para rezar em grupo.</span></div></li>
+        <li><svg width="22" height="22"><use href="#dot"/></svg><div><b>Busca e favoritas</b><span>Encontre por uma palavra e guarde as que você reza sempre.</span></div></li>
+      </ul>
+    </div>
+    <div class="art">
+      <div class="phone">
+        <div class="screen dark">
+          <img src="img/screens/prayer-dark.webp" alt="A oração ao Anjo da Guarda em português e em latim, lado a lado, no tema escuro" width="393" height="852" loading="lazy">
+          <div class="sbar" aria-hidden="true"><span>9:41</span><svg class="sicons" width="66" height="12" viewBox="0 0 66 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/><path d="M29 3.2a9 9 0 0 1 12 0l-1.3 1.4a7 7 0 0 0-9.4 0zM31.3 5.7a5.6 5.6 0 0 1 7.4 0L37.4 7a3.7 3.7 0 0 0-4.8 0zM35 11l-1.8-2a2.6 2.6 0 0 1 3.6 0z"/><rect x="45.5" y="1" width="18" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="47.3" y="2.8" width="12" height="6.4" rx="1.6"/><rect x="64.4" y="4" width="1.4" height="4" rx=".7" opacity=".45"/></g></svg></div>
+          <div class="island" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENTO -->
+<section class="more" aria-labelledby="more-title">
+  <div class="wrap">
+    <div class="more-head">
+      <div><p class="eyebrow">E mais</p><h2 id="more-title">Tudo o que acompanha o dia de quem reza.</h2></div>
+      <p class="lede">Cada detalhe foi pensado para tirar o telefone do caminho e deixar você com o que importa.</p>
+    </div>
+    <div class="bento">
+      <div class="cell span2 via">
+        <img src="img/via-sacra.webp" alt="Jesus carrega a cruz, pintura de Gebhard Fugel" loading="lazy">
+        <div>
+          <h3>Via Sacra</h3>
+          <p>As catorze estações em páginas que deslizam, com a meditação de São Josemaría e a série de pinturas de Gebhard Fugel.</p>
+          <p class="credit">Gebhard Fugel, 1921 · domínio público</p>
+        </div>
+      </div>
+      <div class="cell span2">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 9v4l2.5 2M9 2h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h3>Cronômetro de oração</h3>
+        <p>Meia hora de oração mental sem olhar o relógio. A contagem aparece na Dynamic Island e na tela de bloqueio, e um sino discreto avisa o fim.</p>
+        <div class="di"><i></i>24:58 <small>Oração</small></div>
+      </div>
+      <div class="cell">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></div>
+        <h3>Anotações com Face ID</h3>
+        <p>Propósitos, luzes da oração e o seu apostolado, abertos só por você.</p>
+      </div>
+      <div class="cell">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <h3>Um ponto ao acaso</h3>
+        <p>Sem saber por onde começar a oração? Peça um ponto de Caminho, Sulco ou Forja.</p>
+      </div>
+      <div class="cell">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <h3>Salvos e grifos</h3>
+        <p>Marque pontos e grife frases na Bíblia, nos livros e nas meditações.</p>
+      </div>
+      <div class="cell">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Backup cifrado</h3>
+        <p>Leve tudo para um telefone novo num arquivo protegido por senha.</p>
+      </div>
+      <div class="cell span2">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></div>
+        <h3>Reze na sua língua, e em latim</h3>
+        <p>Interface e conteúdo em português do Brasil e de Portugal, inglês, espanhol e italiano. Leia duas línguas lado a lado, inclusive o latim.</p>
+        <div class="langs"><span>Português</span><span>English</span><span>Español</span><span>Italiano</span><span>Latina</span></div>
+      </div>
+      <div class="cell span2">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <h3>Papel de dia, noturno à noite</h3>
+        <p>Um tema claro com cor de papel e um escuro feito para a oração antes de dormir, com o texto no tamanho que os seus olhos pedem.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<section class="band" aria-labelledby="privacy-title">
+  <span class="donkey" aria-hidden="true"></span>
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Privacidade</p>
+      <h2 id="privacy-title">O que você reza fica entre você e Deus.</h2>
+      <p class="lede">O Forja não tem cadastro, não mostra anúncios e não rastreia você. O seu plano, as suas marcas e as suas anotações ficam guardados no seu telefone.</p>
+    </div>
+    <div class="locks">
+      <div class="lock"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 3l18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><div><b>Sem conta, sem login</b><span>Abra e comece. Não pedimos e-mail nem nome.</span></div></div>
+      <div class="lock"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.8"/></svg></span><div><b>Tudo no aparelho</b><span>Plano, orações e Bíblia funcionam sem internet.</span></div></div>
+      <div class="lock"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span><div><b>Anotações trancadas</b><span>Face ID, digital ou o código do aparelho para abrir.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="perguntas" aria-labelledby="faq-title">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Perguntas</p>
+      <h2 id="faq-title">Antes de baixar.</h2>
+    </div>
+    <div>
+      <details open>
+        <summary>O Forja é gratuito?</summary>
+        <p>Sim. O app é gratuito, sem anúncios e sem compras dentro dele.</p>
+      </details>
+      <details>
+        <summary>Preciso de internet?</summary>
+        <p>Não para o essencial. O plano de vida, as orações, o Santo Terço e as quatro Bíblias ficam no aparelho. A meditação do dia, as leituras da Missa, os livros de São Josemaría e as Missas próximas usam a rede quando você os abre, e a meditação e a liturgia guardam a última cópia.</p>
+      </details>
+      <details>
+        <summary>É um app oficial do Opus Dei?</summary>
+        <p>Não. O Forja é um projeto independente, feito por um fiel que queria reunir num lugar só o que usa todos os dias. Os textos de São Josemaría vêm do escriva.org, e as meditações e cartas, das páginas públicas de opusdei.org e hablarcondios.org.</p>
+      </details>
+      <details>
+        <summary>Funciona no iPhone e no Android?</summary>
+        <p>Sim. Está na App Store para iPhone e no Google Play para Android, com os mesmos recursos nas duas plataformas.</p>
+      </details>
+      <details>
+        <summary>Posso escolher só algumas normas?</summary>
+        <p>Sim. Na primeira abertura você escolhe as normas que vive, e pode mudar quando quiser. Os lembretes são opcionais e você define hora e dias de cada um.</p>
+      </details>
+      <details>
+        <summary>E se eu trocar de telefone?</summary>
+        <p>Faça um backup no Perfil. É um arquivo cifrado com a sua senha, que você guarda onde preferir e restaura no aparelho novo.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta" id="baixar" aria-labelledby="cta-title">
+  <div class="wrap">
+    <div class="cta-card">
+      <img src="img/icon-play-512.png" alt="Ícone do Forja: um burrinho azul sobre fundo creme" width="132" height="132">
+      <div>
+        <h2 id="cta-title">Comece a volta de hoje.</h2>
+        <p class="lede">Baixe o Forja e monte o seu plano de vida em menos de um minuto.</p>
+        <div class="stores">
+          <a class="store" href="https://apps.apple.com/app/id6836571411" target="_blank" rel="noopener" aria-label="Baixar na App Store">
+            <svg width="28" height="28"><use href="#apple"/></svg>
+            <span><small>Baixar na</small><b>App Store</b></span>
+          </a>
+          <a class="store" href="https://play.google.com/store/apps/details?id=com.arthurangeli.forja" target="_blank" rel="noopener" aria-label="Disponível no Google Play">
+            <svg width="26" height="26"><use href="#play"/></svg>
+            <span><small>Disponível no</small><b>Google Play</b></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#inicio"><span class="donkey" aria-hidden="true"></span>Forja</a>
+      <p>Forja é um aplicativo independente e não é uma publicação oficial do Opus Dei. Textos de São Josemaría fornecidos por <a href="https://escriva.org" target="_blank" rel="noopener">escriva.org</a>. Pinturas em domínio público, via Wikimedia Commons. App Store é marca da Apple Inc. Google Play é marca da Google LLC.</p>
+    </div>
+    <nav aria-label="Rodapé">
+      <a href="#plano">Recursos</a>
+      <a href="#perguntas">Perguntas</a>
+      <a href="#baixar">Baixar</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var top=document.getElementById('top');
+    function onScroll(){top.classList.toggle('scrolled',window.scrollY>8)}
+    window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+  })();
+</script>
+</body>
+</html>
